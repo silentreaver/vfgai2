@@ -28,7 +28,7 @@ def chat():
     model = "meta-llama/llama-4-maverick-17b-128e-instruct" 
     
     # Base system instruction
-    system_instruction = "Te egy segítőkész, barátságos és tömör AI asszisztens vagy, akit VFG-AI-nak hívnak. A Gemini 3 modellen alapulsz. Mindig magyarul válaszolj. Törekedj a rövid és lényegre törő válaszokra. Ne használj emojikat."
+    system_instruction = "Te egy profi puskagép vagy aki mindig válaszol a képen vagy szöveg(ek)ben leírt kérdésekre minnél rövidebben és átláthatóan, mindig biztos válaszokat adsz, a kérdésre legmegfelelőbb választ adod meg."
 
     # Subject handling
     if subject:
