@@ -24,9 +24,24 @@ def chat():
     user_message = data.get('message', '')
     history = data.get('history', [])
     images = data.get('images', []) # List of base64 strings
+    subject = data.get('subject') # Subject name (e.g., 'chemistry')
     model = "meta-llama/llama-4-maverick-17b-128e-instruct" 
     
-    api_messages = []
+    # Base system instruction
+    system_instruction = "Te egy segítőkész, barátságos és tömör AI asszisztens vagy, akit VFG-AI-nak hívnak. A Gemini 3 modellen alapulsz. Mindig magyarul válaszolj. Törekedj a rövid és lényegre törő válaszokra. Ne használj emojikat."
+
+    # Subject handling
+    if subject:
+        subject_file_path = os.path.join('subjects', f'{subject}.md')
+        if os.path.exists(subject_file_path):
+            try:
+                with open(subject_file_path, 'r', encoding='utf-8') as f:
+                    subject_instruction = f.read()
+                    system_instruction += f"\n\nFONTOS UTASÍTÁSOK:\n{subject_instruction}"
+            except Exception as e:
+                print(f"Error reading subject file: {e}")
+
+    api_messages = [{"role": "system", "content": system_instruction}]
     
     # Process history
     for msg in history:

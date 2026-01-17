@@ -19,6 +19,14 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
+    <!-- Highlight.js for Code -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Marked.js for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <style>
         :root {
             --primary: #dc3232;
@@ -952,18 +960,14 @@
         const observer = new MutationObserver(scrollToBottom);
         observer.observe(chatMessages, { childList: true, subtree: true, characterData: true });
 
-        // Enhanced markdown parser (basic implementation)
-        function parseMarkdown(text) {
-            let escaped = text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
+        // Configure Marked.js
+        marked.use({
+            breaks: true,
+            gfm: true
+        });
 
-            return escaped
-                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                .replace(/`(.+?)`/g, '<code>$1</code>')
-                .replace(/\n/g, '<br>');
+        function parseMarkdown(text) {
+            return marked.parse(text);
         }
 
         let currentSubject = null;
@@ -1053,6 +1057,21 @@
             }
 
             chatMessages.appendChild(messageDiv);
+
+            // Post-render processing: Math and Code
+            renderMathInElement(content, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false },
+                    { left: '\\(', right: '\\)', display: false },
+                    { left: '\\[', right: '\\]', display: true }
+                ],
+                throwOnError: false
+            });
+
+            content.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
         }
 
         async function sendMessage() {
@@ -1102,7 +1121,8 @@
                     body: JSON.stringify({
                         message: message,
                         images: currentImages,
-                        history: conversationHistory.slice(0, -1) // Send previous history
+                        history: conversationHistory.slice(0, -1), // Send previous history
+                        subject: currentSubject
                     })
                 });
 
