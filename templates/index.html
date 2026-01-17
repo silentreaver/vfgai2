@@ -897,10 +897,13 @@
             <div class="chat-input-wrapper">
                 <div id="image-preview-container"></div>
                 <div class="chat-input-container">
-                    <div class="input-actions" style="opacity: 0.5; pointer-events: none;" title="Image upload not available in this demo">
-                        <button class="action-btn">
+                    <div class="input-actions">
+                        <button class="action-btn" onclick="document.getElementById('image-upload').click()"
+                            title="Upload Images">
                             <i data-lucide="image-plus"></i>
                         </button>
+                        <input type="file" id="image-upload" class="image-upload-input" accept="image/*" multiple
+                            onchange="handleImageUpload(event)">
                     </div>
                     <div class="input-wrapper">
                         <input type="text" id="user-input" class="chat-input-field" placeholder="Type a message..."
@@ -929,11 +932,14 @@
         });
 
         let conversationHistory = [];
+        let uploadedImages = [];
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
         const modelSelector = document.getElementById('model-selector');
-        
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imageUploadInput = document.getElementById('image-upload');
+
         // Auto-scroll function
         function scrollToBottom() {
             chatMessages.scrollTo({
@@ -982,12 +988,44 @@
             ];
             chatMessages.innerHTML = '';
             appendMessage(greeting, 'ai');
-
-            // Highlight active sidebar item
-            // (Simplified logic for demo)
+            uploadedImages = [];
+            imagePreviewContainer.innerHTML = '';
         }
 
-        function appendMessage(text, sender) {
+        function handleImageUpload(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageData = e.target.result;
+                    uploadedImages.push(imageData);
+
+                    const wrapper = document.createElement('div');
+                    wrapper.classList.add('image-preview-wrapper');
+
+                    const img = document.createElement('img');
+                    img.src = imageData;
+                    img.classList.add('image-preview');
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerHTML = '×';
+                    removeBtn.classList.add('remove-image');
+                    removeBtn.onclick = () => {
+                        const index = uploadedImages.indexOf(imageData);
+                        if (index > -1) uploadedImages.splice(index, 1);
+                        wrapper.remove();
+                    };
+
+                    wrapper.appendChild(img);
+                    wrapper.appendChild(removeBtn);
+                    imagePreviewContainer.appendChild(wrapper);
+                };
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        }
+
+        function appendMessage(text, sender, images = []) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'ai-message');
 
@@ -998,6 +1036,13 @@
             const content = document.createElement('div');
             content.classList.add('message-content');
             content.innerHTML = parseMarkdown(text);
+
+            images.forEach(imgUrl => {
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.classList.add('message-image');
+                content.appendChild(img);
+            });
 
             if (sender === 'user') {
                 messageDiv.appendChild(content);
@@ -1010,57 +1055,42 @@
             chatMessages.appendChild(messageDiv);
         }
 
-        function showTypingIndicator() {
-            const typingDiv = document.createElement('div');
-            typingDiv.classList.add('message', 'ai-message');
-            typingDiv.id = 'typing-indicator';
-
-            const avatar = document.createElement('div');
-            avatar.classList.add('message-avatar');
-            avatar.textContent = 'AI';
-
-            const content = document.createElement('div');
-            content.classList.add('message-content', 'typing-indicator');
-            content.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-
-            typingDiv.appendChild(avatar);
-            typingDiv.appendChild(content);
-            chatMessages.appendChild(typingDiv);
-        }
-
-        function removeTypingIndicator() {
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) indicator.remove();
-        }
-
         async function sendMessage() {
             const message = userInput.value.trim();
-            if (message === '') return;
+            if (message === '' && uploadedImages.length === 0) return;
 
-            appendMessage(message, 'user');
-            
+            const currentImages = [...uploadedImages];
+            appendMessage(message, 'user', currentImages);
+
             // Add to history
-            conversationHistory.push({role: "user", content: message});
+            // We'll store simple text/image references, backend handles formatting
+            conversationHistory.push({
+                role: "user",
+                content: message,
+                images: currentImages // Store base64 images in history for context if needed (expensive, usually omitted in long history, but okay for demo)
+            });
 
             userInput.value = '';
+            uploadedImages = [];
+            imagePreviewContainer.innerHTML = '';
             sendButton.disabled = true;
 
             // Create AI response container
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', 'ai-message');
-            
+
             const avatar = document.createElement('div');
             avatar.classList.add('message-avatar');
             avatar.textContent = 'AI';
-            
+
             const content = document.createElement('div');
             content.classList.add('message-content');
-            content.textContent = ""; // Start empty
-            
+            content.textContent = "";
+
             messageDiv.appendChild(avatar);
             messageDiv.appendChild(content);
             chatMessages.appendChild(messageDiv);
-            
+
             let fullResponse = "";
 
             try {
@@ -1071,7 +1101,8 @@
                     },
                     body: JSON.stringify({
                         message: message,
-                        history: conversationHistory
+                        images: currentImages,
+                        history: conversationHistory.slice(0, -1) // Send previous history
                     })
                 });
 
@@ -1085,15 +1116,15 @@
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    
+
                     const chunk = decoder.decode(value, { stream: true });
                     fullResponse += chunk;
                     content.innerHTML = parseMarkdown(fullResponse);
                     scrollToBottom();
                 }
-                
+
                 // Add final response to history
-                conversationHistory.push({role: "model", content: fullResponse});
+                conversationHistory.push({ role: "model", content: fullResponse });
 
             } catch (error) {
                 console.error('Chat error:', error);

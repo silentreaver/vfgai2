@@ -23,37 +23,59 @@ def chat():
     data = request.json
     user_message = data.get('message', '')
     history = data.get('history', [])
-    model = "meta-llama/llama-4-maverick-17b-128e-instruct" # Hardcoded as per request
-    
-    # Construct messages for the API
-    # History format from frontend might need adjustment to match Groq's expected format
-    # Groq expects: [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]
+    images = data.get('images', []) # List of base64 strings
+    model = "meta-llama/llama-4-maverick-17b-128e-instruct" 
     
     api_messages = []
     
-    # Simple conversion of history if needed, or assume frontend sends compatible format
-    # The reference frontend sends history. 
-    # Let's trust the frontend sends a compatible structure or we adapt it here.
-    # We will accept what the frontend sends but ensure the new message is added.
-    
-    # If history is empty, add system prompt or just start
-    # The frontend handles 'modes' (geography, etc) by sending a greeting. 
-    # We'll just append the new user message.
-    
-    # Flatten history to valid messages
+    # Process history
     for msg in history:
         role = "assistant" if msg.get("role") == "model" or msg.get("role") == "ai" else "user"
-        content = ""
+        content_block = []
+        
+        # Text content
+        text_content = ""
         if "parts" in msg:
-            content = msg["parts"][0]["text"]
+            text_content = msg["parts"][0]["text"]
         elif "content" in msg:
-            content = msg["content"]
+            text_content = msg["content"]
         else: 
-            content = str(msg) # Fallback
+            text_content = str(msg)
             
-        api_messages.append({"role": role, "content": content})
+        content_block.append({"type": "text", "text": text_content})
+            
+        # Image content in history (optional, simpler to ignore old images to save tokens/bandwidth unless critical)
+        # But if we did:
+        if msg.get("images"):
+             for img_b64 in msg.get("images"):
+                 content_block.append({
+                     "type": "image_url",
+                     "image_url": {
+                         "url": img_b64
+                     }
+                 })
 
-    api_messages.append({"role": "user", "content": user_message})
+        # If pure text, can send string. If mixed, must be list of objects.
+        # Groq Llama 3.2 Vision supports list of content blocks.
+        if len(content_block) == 1 and content_block[0]["type"] == "text":
+            api_messages.append({"role": role, "content": content_block[0]["text"]})
+        else:
+            api_messages.append({"role": role, "content": content_block})
+
+    # Process current message
+    current_message_content = []
+    if user_message:
+        current_message_content.append({"type": "text", "text": user_message})
+    
+    for img_b64 in images:
+        current_message_content.append({
+            "type": "image_url",
+            "image_url": {
+                "url": img_b64
+            }
+        })
+
+    api_messages.append({"role": "user", "content": current_message_content})
 
     def generate():
         try:
