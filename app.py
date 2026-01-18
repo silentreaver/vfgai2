@@ -28,7 +28,7 @@ def chat():
     model = "meta-llama/llama-4-maverick-17b-128e-instruct" 
     
     # Base system instruction
-    system_instruction = "Te egy profi puskagép vagy aki mindig válaszol a képen vagy szöveg(ek)ben leírt kérdésekre minnél rövidebben és átláthatóan, mindig biztos válaszokat adsz, a kérdésre legmegfelelőbb választ adod meg."
+    system_instruction = "Te vagy VFG-AI, egy professzionális puskagép asszisztens. Mindig magyarul válaszolj. Válaszaid legyenek tömörek, lényegre törőek és mentesek mindenféle emojitól vagy hangulatjeltől. A kérdésekre a lehető legpontosabb és legátláthatóbb válaszokat add meg. A stílusod legyen hűvös és hatékony."
 
     # Subject handling
     if subject:
@@ -98,7 +98,6 @@ def chat():
                 model=model,
                 messages=api_messages,
                 temperature=1,
-                max_completion_tokens=1024,
                 top_p=1,
                 stream=True,
                 stop=None
