@@ -478,17 +478,21 @@
         }
 
         .message-content {
-            padding: 16px 20px;
-            border-radius: 16px;
-            line-height: 1.6;
-            font-size: 0.95em;
+            padding: 14px 20px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
             position: relative;
+            max-width: 100%;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .message.ai-message .message-content {
-            background: rgba(15, 0, 0, 0.8);
+            background: rgba(15, 0, 0, 0.9);
             border: 1px solid var(--border-color);
-            color: var(--text-primary);
+            color: #ffffff;
+            /* Brighter for better contrast on mobile */
             border-top-left-radius: 4px;
         }
 
@@ -855,24 +859,44 @@
             }
 
             .chat-header {
-                padding: 12px 16px;
-                padding-left: 64px;
+                padding: 10px 12px;
+                padding-left: 60px;
                 /* Space for menu button */
+                justify-content: space-between;
+            }
+
+            .chat-title {
+                font-size: 0.85rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 120px;
             }
 
             .chat-subtitle {
                 display: none;
-                /* Simplify header for mobile */
+                /* Hide subtitle to save space */
             }
 
             .model-selector {
-                padding: 8px 12px;
-                font-size: 0.75rem;
-                max-width: 120px;
+                padding: 6px 10px;
+                font-size: 0.7rem;
+                max-width: 110px;
+                /* Prevent overflow */
+                margin-left: 4px;
             }
         }
 
         @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+                /* Prevent horizontal scroll */
+            }
+
+            .main-container {
+                overflow-x: hidden;
+            }
+
             .chat-input-wrapper {
                 padding: 12px 16px;
             }
@@ -1066,6 +1090,14 @@
             appendMessage(greeting, 'ai');
             uploadedImages = [];
             imagePreviewContainer.innerHTML = '';
+
+            // Auto-close sidebar on mobile after selection
+            if (window.innerWidth <= 1024) {
+                const sidebar = document.querySelector('.sidebar');
+                if (sidebar.classList.contains('active')) {
+                    toggleSidebar();
+                }
+            }
         }
 
         function handleImageUpload(event) {
