@@ -621,42 +621,38 @@
             background: var(--primary);
             color: white;
             border-radius: 50%;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
             cursor: pointer;
             border: none;
             transition: all 0.2s ease;
-            opacity: 0;
-        }
-
-        .image-preview-wrapper:hover .remove-image {
             opacity: 1;
-        }
-
-        .remove-image:hover {
-            transform: scale(1.1);
-            background: var(--primary-light);
+            /* Always visible on mobile for clarity */
         }
 
         .chat-input-container {
             display: flex;
             gap: 12px;
             align-items: flex-end;
+            /* Align bottom for expanding textarea */
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         .input-actions {
             display: flex;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .action-btn {
-            width: 44px;
-            height: 44px;
-            background: rgba(220, 50, 50, 0.1);
+            width: 48px;
+            height: 48px;
+            background: rgba(220, 20, 60, 0.1);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             cursor: pointer;
@@ -664,62 +660,83 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-secondary);
+            color: var(--primary);
         }
 
         .action-btn:hover {
-            background: rgba(220, 50, 50, 0.2);
+            background: rgba(220, 20, 60, 0.2);
             border-color: var(--primary);
             color: var(--primary-light);
             transform: translateY(-2px);
         }
 
-        .action-btn i {
-            width: 20px;
-            height: 20px;
-        }
-
         .input-wrapper {
             flex: 1;
             position: relative;
+            background: rgba(15, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(220, 20, 60, 0.1);
         }
 
         .chat-input-field {
             width: 100%;
-            background: rgba(30, 10, 10, 0.5);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 14px 18px;
+            background: transparent;
+            border: none;
+            padding: 12px 16px;
             color: var(--text-primary);
-            font-size: 0.95em;
+            font-size: 1rem;
             font-family: inherit;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             resize: none;
-        }
-
-        .chat-input-field:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(220, 50, 50, 0.15),
-                0 0 20px rgba(220, 50, 50, 0.1);
+            max-height: 200px;
+            min-height: 48px;
+            display: block;
+            overflow-y: auto;
         }
 
         .chat-input-field::placeholder {
             color: var(--text-muted);
         }
 
+        .send-button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.2);
+        }
+
+        .send-button span {
+            display: none;
+            /* Hide text on mobile button */
+        }
+
         .model-selector {
-            background: rgba(30, 10, 10, 0.5);
+            background: rgba(15, 0, 0, 0.8);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px 16px;
+            padding: 10px 16px;
             color: var(--text-primary);
             font-size: 0.85em;
             font-family: inherit;
             cursor: pointer;
             transition: all 0.3s ease;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23dc3232' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23DC143C' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
             padding-right: 36px;
@@ -729,34 +746,14 @@
             border-color: var(--primary);
         }
 
-        .model-selector:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(220, 50, 50, 0.15);
+        .send-button span {
+            display: inline-block;
         }
 
-        .send-button {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            padding: 14px 28px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95em;
-            font-family: inherit;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-width: 120px;
-            box-shadow: 0 4px 15px var(--primary-glow);
-        }
-
-        .send-button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px var(--primary-glow);
+        @media (max-width: 1024px) {
+            .send-button span {
+                display: none;
+            }
         }
 
         .send-button:active:not(:disabled) {
@@ -818,17 +815,20 @@
                 top: 0;
                 left: 0;
                 height: 100%;
-                width: 280px;
+                width: 85%;
+                /* Optimized width */
+                max-width: 320px;
                 z-index: 1001;
                 transform: translateX(-100%);
                 border-radius: 0;
                 border-right: 1px solid var(--border-color);
-                background: #0a0000;
-                /* Solid background for legibility */
+                background: #000000;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .sidebar.active {
                 transform: translateX(0);
+                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.9);
             }
 
             .sidebar-overlay {
@@ -838,9 +838,9 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.5);
+                background: rgba(0, 0, 0, 0.7);
                 z-index: 1000;
-                backdrop-filter: blur(2px);
+                backdrop-filter: blur(4px);
             }
 
             .sidebar-overlay.active {
@@ -851,39 +851,50 @@
                 height: 100%;
                 border-radius: 0;
                 border: none;
+                background: #000000;
             }
 
             .chat-header {
-                padding-left: 60px;
+                padding: 12px 16px;
+                padding-left: 64px;
                 /* Space for menu button */
+            }
+
+            .chat-subtitle {
+                display: none;
+                /* Simplify header for mobile */
+            }
+
+            .model-selector {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                max-width: 120px;
             }
         }
 
         @media (max-width: 768px) {
+            .chat-input-wrapper {
+                padding: 12px 16px;
+            }
+
             .chat-input-container {
-                flex-direction: column;
-            }
-
-            .input-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-
-            .input-wrapper {
-                width: 100%;
-            }
-
-            .send-button {
-                width: 100%;
+                gap: 8px;
             }
 
             .message {
-                max-width: 95%;
+                max-width: 90%;
+                gap: 10px;
             }
 
-            .model-selector {
-                width: 140px;
-                text-overflow: ellipsis;
+            .message-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.7rem;
+            }
+
+            .message-content {
+                padding: 12px 16px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -975,11 +986,11 @@
                             onchange="handleImageUpload(event)">
                     </div>
                     <div class="input-wrapper">
-                        <input type="text" id="user-input" class="chat-input-field" placeholder="Írj egy üzenetet..."
-                            autofocus>
+                        <textarea id="user-input" class="chat-input-field" placeholder="Írj egy üzenetet..." rows="1"
+                            oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
                     </div>
                     <button id="send-button" class="send-button">
-                        Küldés
+                        <span>Küldés</span>
                         <i data-lucide="send"></i>
                     </button>
                 </div>
@@ -1151,6 +1162,7 @@
             });
 
             userInput.value = '';
+            userInput.style.height = ''; // Reset textarea height
             uploadedImages = [];
             imagePreviewContainer.innerHTML = '';
             sendButton.disabled = true;
