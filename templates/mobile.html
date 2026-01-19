@@ -635,11 +635,6 @@
                 .replace(/`(.+?)`/g, '<code style="background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px;">$1</code>')
                 .replace(/\n/g, '<br>');
 
-            // Wrap code blocks (simplistic detection)
-            // Real implementation would use marked.js, but minimal regex for now:
-            // Note: In a real app we'd use the marked.js library included in desktop
-            // Let's use marked.js via CDN? No, sticking to simple or reusing the logic from desktop
-
             return html;
         }
 
@@ -668,6 +663,13 @@
             uploadedImages = [];
             document.getElementById('mobile-image-preview').innerHTML = '';
 
+            // Add user message to history
+            conversationHistory.push({
+                role: "user",
+                content: text,
+                images: images
+            });
+
             // Show typing
             const container = document.getElementById('chat-messages');
             const typingDiv = document.createElement('div');
@@ -683,7 +685,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: text,
-                        history: conversationHistory,
+                        history: conversationHistory.slice(0, -1),
                         images: images,
                         subject: currentSubject
                     })
@@ -693,13 +695,48 @@
 
                 if (!response.ok) throw new Error('API Error');
 
-                const data = await response.json();
-                appendMessage(data.response, 'ai');
-                conversationHistory = data.new_history;
+                // Create placeholders for streaming
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message ai-message';
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                msgDiv.appendChild(contentDiv);
+                container.appendChild(msgDiv);
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullResponse = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    fullResponse += chunk;
+                    contentDiv.innerHTML = parseMarkdown(fullResponse);
+                    container.scrollTop = container.scrollHeight;
+                }
+
+                // Final render
+                contentDiv.innerHTML = parseMarkdown(fullResponse);
+                renderMathInElement(msgDiv, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false }
+                    ],
+                    throwOnError: false
+                });
+                msgDiv.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+
+                // Update history
+                conversationHistory.push({ role: "model", content: fullResponse });
 
             } catch (e) {
                 document.getElementById('typing')?.remove();
                 appendMessage("Hiba történt. Kérlek próbáld újra.", 'ai');
+                console.error(e);
             }
         }
 
