@@ -714,7 +714,7 @@
 
                 // 5. Restore original LaTeX blocks
                 mathBlocks.forEach((original, index) => {
-                    html = html.replace(`[[MATH_BLOCK_${index}]]`, original);
+                    html = html.replace(`[[MATH_BLOCK_${index}]]`, () => original);
                 });
 
                 return html;
