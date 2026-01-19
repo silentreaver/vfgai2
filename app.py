@@ -18,6 +18,10 @@ client = Groq(
 def index():
     return render_template('index.html')
 
+@app.route('/mobile')
+def mobile():
+    return render_template('mobile.html')
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.json
