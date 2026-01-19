@@ -682,14 +682,42 @@
         function parseMarkdown(text) {
             if (!text) return "";
 
-            // Basic protection for LaTeX underscores/carets before marked
-            // Only protect if inside $ or $$ blocks
-            const protectedText = text.replace(/\$\$([\s\S]+?)\$\$|\$([^\$]+?)\$/g, (match) => {
-                return match.replace(/_/g, '\\_').replace(/\^/g, '\\^');
+            // Placeholder system to protect LaTeX from Marked.js
+            const mathBlocks = [];
+            let processedText = text;
+
+            // 1. Extract and hide display math $$ ... $$
+            processedText = processedText.replace(/\$\$([\s\S]+?)\$\$/g, (match) => {
+                const placeholder = `[[MATH_BLOCK_${mathBlocks.length}]]`;
+                mathBlocks.push(match);
+                return placeholder;
+            });
+
+            // 2. Extract and hide inline math $ ... $
+            // Note: We use a more careful regex to avoid matching $ in normal text
+            processedText = processedText.replace(/\$([^\$\n]+?)\$/g, (match) => {
+                const placeholder = `[[MATH_BLOCK_${mathBlocks.length}]]`;
+                mathBlocks.push(match);
+                return placeholder;
+            });
+
+            // 3. Extract and hide LaTeX backslash notation \( ... \) and \[ ... \]
+            processedText = processedText.replace(/\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g, (match) => {
+                const placeholder = `[[MATH_BLOCK_${mathBlocks.length}]]`;
+                mathBlocks.push(match);
+                return placeholder;
             });
 
             try {
-                return marked.parse(protectedText);
+                // 4. Parse the "cleaned" markdown
+                let html = marked.parse(processedText);
+
+                // 5. Restore original LaTeX blocks
+                mathBlocks.forEach((original, index) => {
+                    html = html.replace(`[[MATH_BLOCK_${index}]]`, original);
+                });
+
+                return html;
             } catch (e) {
                 console.error("Marked error:", e);
                 return text;
