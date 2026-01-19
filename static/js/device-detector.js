@@ -3,7 +3,7 @@
  * Detects mobile vs desktop and redirects to appropriate UI
  */
 
-(function() {
+(function () {
     'use strict';
 
     const MOBILE_PATH = '/mobile';
@@ -15,15 +15,15 @@
      */
     function isMobileDevice() {
         // Check for saved user preference first
-        const savedPreference = localStorage.getItem(PREFERENCE_KEY);
+        const savedPreference = sessionStorage.getItem(PREFERENCE_KEY);
         if (savedPreference) {
             return savedPreference === 'mobile';
         }
 
         // Check for touch capability
-        const hasTouch = 'ontouchstart' in window || 
-                         navigator.maxTouchPoints > 0 || 
-                         navigator.msMaxTouchPoints > 0;
+        const hasTouch = 'ontouchstart' in window ||
+            navigator.maxTouchPoints > 0 ||
+            navigator.msMaxTouchPoints > 0;
 
         // Check screen width (mobile-first breakpoint)
         const isNarrowScreen = window.innerWidth <= 768;
@@ -79,12 +79,12 @@
     /**
      * Set device preference (for manual toggle)
      */
-    window.setDevicePreference = function(preference) {
+    window.setDevicePreference = function (preference) {
         if (preference === 'mobile' || preference === 'desktop') {
-            localStorage.setItem(PREFERENCE_KEY, preference);
+            sessionStorage.setItem(PREFERENCE_KEY, preference);
             window.location.reload();
         } else if (preference === 'auto') {
-            localStorage.removeItem(PREFERENCE_KEY);
+            sessionStorage.removeItem(PREFERENCE_KEY);
             window.location.reload();
         }
     };
@@ -92,8 +92,8 @@
     /**
      * Get current device preference
      */
-    window.getDevicePreference = function() {
-        return localStorage.getItem(PREFERENCE_KEY) || 'auto';
+    window.getDevicePreference = function () {
+        return sessionStorage.getItem(PREFERENCE_KEY) || 'auto';
     };
 
     // Run detection immediately
@@ -101,11 +101,11 @@
 
     // Also listen for resize events (e.g., device rotation or browser resize)
     let resizeTimeout;
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
+        resizeTimeout = setTimeout(function () {
             // Only redirect if no saved preference
-            if (!localStorage.getItem(PREFERENCE_KEY)) {
+            if (!sessionStorage.getItem(PREFERENCE_KEY)) {
                 redirectIfNeeded();
             }
         }, 500);
