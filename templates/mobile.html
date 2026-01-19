@@ -25,6 +25,9 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
+    <!-- Marked.js for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <!-- Device Detection (to handle manual switch back to desktop) -->
     <script src="{{ url_for('static', filename='js/device-detector.js') }}"></script>
 
@@ -192,7 +195,24 @@
             font-size: 0.95rem;
             line-height: 1.5;
             word-wrap: break-word;
+            overflow-wrap: anywhere;
+            hyphens: auto;
             position: relative;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Ensure math doesn't overflow */
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 8px 0;
+            margin: 8px 0;
+            max-width: 100%;
+        }
+
+        .katex {
+            white-space: normal;
         }
 
         .message.ai-message .message-content {
@@ -613,7 +633,9 @@
             renderMathInElement(msgDiv, {
                 delimiters: [
                     { left: "$$", right: "$$", display: true },
-                    { left: "$", right: "$", display: false }
+                    { left: "$", right: "$", display: false },
+                    { left: "\\(", right: "\\)", display: false },
+                    { left: "\\[", right: "\\]", display: true }
                 ],
                 throwOnError: false
             });
@@ -624,18 +646,14 @@
             });
         }
 
-        function parseMarkdown(text) {
-            // Basic markdown parser + highlight.js support
-            let html = text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                .replace(/`(.+?)`/g, '<code style="background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px;">$1</code>')
-                .replace(/\n/g, '<br>');
+        // Configure Marked.js
+        marked.use({
+            breaks: true,
+            gfm: true
+        });
 
-            return html;
+        function parseMarkdown(text) {
+            return marked.parse(text);
         }
 
         // Auto-resize textarea
@@ -713,19 +731,21 @@
 
                     const chunk = decoder.decode(value, { stream: true });
                     fullResponse += chunk;
-                    contentDiv.innerHTML = parseMarkdown(fullResponse);
-                    container.scrollTop = container.scrollHeight;
-                }
-
-                // Final render
                 contentDiv.innerHTML = parseMarkdown(fullResponse);
-                renderMathInElement(msgDiv, {
-                    delimiters: [
-                        { left: "$$", right: "$$", display: true },
-                        { left: "$", right: "$", display: false }
-                    ],
-                    throwOnError: false
-                });
+                container.scrollTop = container.scrollHeight;
+            }
+
+            // Final render
+            contentDiv.innerHTML = parseMarkdown(fullResponse);
+            renderMathInElement(msgDiv, {
+                delimiters: [
+                    { left: "$$", right: "$$", display: true },
+                    { left: "$", right: "$", display: false },
+                    { left: "\\(", right: "\\)", display: false },
+                    { left: "\\[", right: "\\]", display: true }
+                ],
+                throwOnError: false
+            });
                 msgDiv.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
