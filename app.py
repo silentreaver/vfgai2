@@ -32,7 +32,14 @@ def chat():
     model = "meta-llama/llama-4-maverick-17b-128e-instruct" 
     
     # Base system instruction
-    system_instruction = "Te vagy VFG-AI, egy professzionális puskagép asszisztens. Mindig magyarul válaszolj. Válaszaid legyenek tömörek, lényegre törőek és mentesek mindenféle emojitól vagy hangulatjeltől. A kérdésekre a lehető legpontosabb és legátláthatóbb válaszokat add meg. A stílusod legyen hűvös és hatékony."
+    system_instruction = (
+        "Te vagy VFG-AI, egy professzionális puskagép asszisztens. Mindig magyarul válaszolj. "
+        "Válaszaid legyenek tömörek, lényegre törőek és mentesek mindenféle emojitól vagy hangulatjeltől. "
+        "A kérdésekre a lehető legpontosabb és legátláthatóbb válaszokat add meg. A stílusod legyen hűvös és hatékony. "
+        "FONTOS: Minden matematikai képletet és egyenletet LaTeX formátumban írj. "
+        "Használj $$ ... $$ vagy \\[ ... \\] jelölést a kiemelt képletekhez, és $ ... $ vagy \\( ... \\) jelölést a szövegközi képletekhez. "
+        "Például: $$ pV = nRT $$ vagy $ E = mc^2 $."
+    )
 
     # Subject handling
     if subject:
@@ -113,7 +120,7 @@ def chat():
                     yield content
 
         except Exception as e:
-            yield f"Error: {str(e)}"
+            yield f"Hiba: {str(e)}"
 
     return Response(stream_with_context(generate()), mimetype='text/plain')
 
