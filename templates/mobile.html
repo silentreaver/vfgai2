@@ -656,16 +656,7 @@
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
 
-            // Render math
-            renderMathInElement(msgDiv, {
-                delimiters: [
-                    { left: "$$", right: "$$", display: true },
-                    { left: "$", right: "$", display: false },
-                    { left: "\\(", right: "\\)", display: false },
-                    { left: "\\[", right: "\\]", display: true }
-                ],
-                throwOnError: false
-            });
+            container.scrollTop = container.scrollHeight;
 
             // Highlight code
             msgDiv.querySelectorAll('pre code').forEach((block) => {
@@ -682,44 +673,53 @@
         function parseMarkdown(text) {
             if (!text) return "";
 
-            // Placeholder system to protect LaTeX from Marked.js
             const mathBlocks = [];
             let processedText = text;
 
-            // 1. Extract and hide display math $$ ... $$
-            processedText = processedText.replace(/\$\$([\s\S]+?)\$\$/g, (match) => {
+            // Helper to replace and store
+            const storeMath = (match, content, display) => {
                 const placeholder = `[[MATH_BLOCK_${mathBlocks.length}]]`;
-                mathBlocks.push(match);
+                mathBlocks.push({ raw: match, content: content, display: display });
                 return placeholder;
-            });
+            };
 
-            // 2. Extract and hide inline math $ ... $
-            // Note: We use a more careful regex to avoid matching $ in normal text
-            processedText = processedText.replace(/\$([^\$\n]+?)\$/g, (match) => {
-                const placeholder = `[[MATH_BLOCK_${mathBlocks.length}]]`;
-                mathBlocks.push(match);
-                return placeholder;
-            });
+            // 1. Display Math $$...$$
+            processedText = processedText.replace(/\$\$([\s\S]+?)\$\$/g, (m, c) => storeMath(m, c, true));
 
-            // 3. Extract and hide LaTeX backslash notation \( ... \) and \[ ... \]
-            processedText = processedText.replace(/\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g, (match) => {
-                const placeholder = `[[MATH_BLOCK_${mathBlocks.length}]]`;
-                mathBlocks.push(match);
-                return placeholder;
-            });
+            // 2. Inline Math $...$
+            processedText = processedText.replace(/\$([^\$\n]+?)\$/g, (m, c) => storeMath(m, c, false));
+
+            // 3. LaTeX brackets
+            processedText = processedText.replace(/\\\[([\s\S]+?)\\\]/g, (m, c) => storeMath(m, c, true));
+            processedText = processedText.replace(/\\\(([\s\S]+?)\\\)/g, (m, c) => storeMath(m, c, false));
 
             try {
-                // 4. Parse the "cleaned" markdown
                 let html = marked.parse(processedText);
 
-                // 5. Restore original LaTeX blocks
-                mathBlocks.forEach((original, index) => {
-                    html = html.replace(`[[MATH_BLOCK_${index}]]`, () => original);
+                // Restore and Pre-render
+                mathBlocks.forEach((item, index) => {
+                    const placeholder = `[[MATH_BLOCK_${index}]]`;
+                    let replacement = item.raw;
+
+                    try {
+                        if (window.katex) {
+                            replacement = katex.renderToString(item.content, {
+                                displayMode: item.display,
+                                throwOnError: true,
+                                output: 'html'
+                            });
+                        }
+                    } catch (err) {
+                        // On error, return safe raw text to avoid red errors
+                        replacement = item.raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    }
+
+                    html = html.replace(placeholder, () => replacement);
                 });
 
                 return html;
             } catch (e) {
-                console.error("Marked error:", e);
+                console.error("Markdown error:", e);
                 return text;
             }
         }
@@ -805,15 +805,6 @@
 
                 // Final render
                 contentDiv.innerHTML = parseMarkdown(fullResponse);
-                renderMathInElement(msgDiv, {
-                    delimiters: [
-                        { left: "$$", right: "$$", display: true },
-                        { left: "$", right: "$", display: false },
-                        { left: "\\(", right: "\\)", display: false },
-                        { left: "\\[", right: "\\]", display: true }
-                    ],
-                    throwOnError: false
-                });
                 msgDiv.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
@@ -877,7 +868,9 @@
         }
 
         // Init
-        initChat();
+        document.addEventListener('DOMContentLoaded', () => {
+            initChat();
+        });
 
     </script>
 </body>
