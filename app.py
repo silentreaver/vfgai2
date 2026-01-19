@@ -120,7 +120,7 @@ def chat():
                     yield content
 
         except Exception as e:
-            yield f"Error: {str(e)}"
+            yield f"Hiba: {str(e)}"
 
     return Response(stream_with_context(generate()), mimetype='text/plain')
 

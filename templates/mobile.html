@@ -532,8 +532,12 @@
     <div class="input-bar">
         <div id="mobile-image-preview"></div>
         <input type="file" id="img-upload" hidden accept="image/*" multiple onchange="handleMobileImageUpload(event)">
-        <button class="image-btn" onclick="document.getElementById('img-upload').click()">
+        <input type="file" id="camera-upload" hidden accept="image/*" capture="environment" onchange="handleMobileImageUpload(event)">
+        <button class="image-btn" onclick="document.getElementById('img-upload').click()" title="Kép feltöltése">
             <i data-lucide="image"></i>
+        </button>
+        <button class="image-btn" onclick="document.getElementById('camera-upload').click()" title="Kamera megnyitása">
+            <i data-lucide="camera"></i>
         </button>
         <textarea class="chat-input" id="mobile-input" placeholder="Üzenet..." rows="1"></textarea>
         <button class="send-btn" id="mobile-send">
@@ -784,7 +788,7 @@
         }
 
         function switchDesktop() {
-            if (confirm("Váltás asztali nézetre?")) {
+            if (confirm("Váltasz asztali nézetre?")) {
                 window.setDevicePreference('desktop');
             }
         }
