@@ -37,7 +37,7 @@ def chat():
     subject = data.get('subject') # Subject name (e.g., 'chemistry')
     
     # Single model for both vision and reasoning
-    MODEL_NAME = "gemini-3-pro" # Using the latest Gemini 3 Pro model
+    MODEL_NAME = "gemini-3-pro-preview" # Using the latest Gemini 3 Pro Preview model
     
     # Base system instruction
     system_instruction = (

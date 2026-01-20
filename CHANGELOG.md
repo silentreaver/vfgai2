@@ -120,3 +120,14 @@ A Groq Compound modell **nem rendelkezik vision képességgel**, ezért kritikus
 
 #### 2. Dokumentáció frissítése
 - README.md frissítve az új modellspecifikációval.
+
+## 2026-01-20 - Modellnév javítása: Gemini 3 Pro Preview
+
+### Változtatások
+
+#### 1. Hibajavítás
+- A modellnevet frissítettem `gemini-3-pro`-ról a helyes **`gemini-3-pro-preview`** névre.
+- Ez megoldja a `404 NOT_FOUND` hibát, amit a nem létező modellnév okozott.
+
+#### 2. Dokumentáció frissítése
+- README.md frissítve a helyes modellnévvel.
