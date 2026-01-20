@@ -39,8 +39,8 @@ def chat():
     subject = data.get('subject') # Subject name (e.g., 'chemistry')
     
     # Models from vfg-ai
-    VISION_MODEL = "gemini-2.0-flash" # Gemini 2.0 Flash is excellent for vision
-    BRAIN_MODEL = "gemini-2.0-flash"  # Using the same high-performance model
+    VISION_MODEL = "gemini-3-pro" # Using the latest Gemini 3 Pro for vision
+    BRAIN_MODEL = "gemini-3-pro"  # Using the latest Gemini 3 Pro for reasoning
     
     # Base system instruction
     system_instruction = (

@@ -9,7 +9,7 @@ A VFG-AI egy professzionális oktatási asszisztens alkalmazás, amely képes b�
 ### Kétmodelles Pipeline
 
 1. **Modell 1 - A Szem (Vision Model)**
-   - **Modell**: `gemini-2.0-flash`
+   - **Modell**: `gemini-3-pro`
    - **Feladat**: A kép fogadása és **1:1 arányú digitális rekonstrukció** létrehozása
    - **Kimenet**: Részletes szöveges leírás Markdown formátumban, amely tartalmazza:
      - Minden szöveget és számot
@@ -19,7 +19,7 @@ A VFG-AI egy professzionális oktatási asszisztens alkalmazás, amely képes b�
      - Táblázatok teljes tartalmát
 
 2. **Modell 2 - Az Agy (Reasoning Model)**
-   - **Modell**: `gemini-2.0-flash`
+   - **Modell**: `gemini-3-pro`
    - **Feladat**: A vision modell által generált digitális rekonstrukció és a felhasználó kérdésének feldolgozása
    - **Kimenet**: Pontos, tömör válasz magyar nyelven
 
@@ -95,8 +95,8 @@ Ezek az utasítások automatikusan betöltődnek, amikor kiválasztasz egy tant�
 
 - **Backend**: Flask (Python)
 - **AI API**: Google Gemini
-- **Vision Model**: Gemini 2.0 Flash
-- **Reasoning Model**: Gemini 2.0 Flash
+- **Vision Model**: Gemini 3 Pro
+- **Reasoning Model**: Gemini 3 Pro
 - **Frontend**: HTML, CSS, JavaScript (Vanilla)
 
 ## Projekt Struktúra

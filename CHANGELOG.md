@@ -82,3 +82,15 @@ A Groq Compound modell **nem rendelkezik vision képességgel**, ezért kritikus
 
 #### 4. Dokumentáció Frissítése
 - README.md frissítve az új modellekkel és telepítési útmutatóval.
+
+## 2026-01-20 - Frissítés Gemini 3 Pro modellre
+
+### Változtatások
+
+#### 1. Modell Frissítés
+- **Vision Model**: Gemini 2.0 Flash → **Gemini 3 Pro**
+- **Reasoning Model**: Gemini 2.0 Flash → **Gemini 3 Pro**
+- **Indok**: A legújabb Gemini 3 Pro modell használata a maximális teljesítmény és pontosság érdekében.
+
+#### 2. Dokumentáció Frissítése
+- README.md frissítve az új Gemini 3 Pro modellekkel.
