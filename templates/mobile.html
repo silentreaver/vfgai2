@@ -449,6 +449,25 @@
                     if (done) break;
                     fullText += decoder.decode(value);
                     contentDiv.innerHTML = marked.parse(fullText);
+                    
+                    // Trigger KaTeX for the streaming content
+                    renderMathInElement(contentDiv, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true},
+                            { left: '\\begin{equation}', right: '\\end{equation}', display: true },
+                            { left: '\\begin{align}', right: '\\end{align}', display: true },
+                            { left: '\\begin{alignat}', right: '\\end{alignat}', display: true },
+                            { left: '\\begin{gather}', right: '\\end{gather}', display: true },
+                            { left: '\\begin{CD}', right: '\\end{CD}', display: true }
+                        ],
+                        throwOnError: false,
+                        trust: true,
+                        strict: false
+                    });
+                    
                     container.scrollTop = container.scrollHeight;
                 }
                 conversationHistory.push({role: 'user', content: text});
