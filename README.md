@@ -8,7 +8,7 @@ A VFG-AI egy professzionális oktatási asszisztens alkalmazás, amely képes b�
 
 Az alkalmazás egyetlen, nagy teljesítményű multimodális modellt használ, amely közvetlenül képes értelmezni a képeket és a szöveges kérdéseket.
 
-- **Modell**: `gemini-2.0-flash` (vagy a beállított Gemini modell)
+- **Modell**: `gemini-3-pro` (a legújabb Gemini modell)
 - **Képességek**: Natív látás (Vision) és komplex érvelés (Reasoning) egyetlen lépésben.
 - **Kimenet**: Pontos, tömör válasz magyar nyelven, LaTeX formátumú matematikai képletekkel.
 
@@ -48,7 +48,7 @@ Az alkalmazás egyetlen, nagy teljesítményű multimodális modellt használ, a
 
 - **Backend**: Flask (Python)
 - **AI API**: Google Gemini SDK
-- **Modell**: Gemini 2.0 Flash
+- **Modell**: Gemini 3 Pro
 - **Frontend**: HTML, CSS, JavaScript
 
 ## Licenc

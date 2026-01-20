@@ -109,3 +109,14 @@ A Groq Compound modell **nem rendelkezik vision képességgel**, ezért kritikus
 
 #### 3. Dokumentáció frissítése
 - README.md egyszerűsítve az új architektúrának megfelelően.
+
+## 2026-01-20 - Modell frissítés: Gemini 3 Pro
+
+### Változtatások
+
+#### 1. Modell csere
+- A rendszert frissítettem a legújabb **Gemini 3 Pro** modellre.
+- Ez a modell kezeli az összes bejövő kérést (szöveg és kép) az egyszerűsített, egy-modelles architektúrában.
+
+#### 2. Dokumentáció frissítése
+- README.md frissítve az új modellspecifikációval.
