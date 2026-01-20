@@ -131,3 +131,14 @@ A Groq Compound modell **nem rendelkezik vision képességgel**, ezért kritikus
 
 #### 2. Dokumentáció frissítése
 - README.md frissítve a helyes modellnévvel.
+
+## 2026-01-20 - Modell frissítés: Gemini 3 Flash Preview
+
+### Változtatások
+
+#### 1. Modell csere
+- A rendszert frissítettem a legújabb **Gemini 3 Flash Preview** modellre (`gemini-3-flash-preview`).
+- Ez a modell gyorsabb válaszidőt és kiváló multimodális teljesítményt nyújt.
+
+#### 2. Dokumentáció frissítése
+- README.md frissítve az új modellspecifikációval.
