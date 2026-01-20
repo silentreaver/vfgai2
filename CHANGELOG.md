@@ -94,3 +94,18 @@ A Groq Compound modell **nem rendelkezik vision képességgel**, ezért kritikus
 
 #### 2. Dokumentáció Frissítése
 - README.md frissítve az új Gemini 3 Pro modellekkel.
+
+## 2026-01-20 - Rendszer egyszerűsítése (Single Model)
+
+### Változtatások
+
+#### 1. Kétmodelles logika eltávolítása
+- Megszűnt a háttérben történő 1:1 arányú kép-szöveg átfordítás.
+- A rendszer mostantól közvetlenül a Gemini modellnek küldi el a képeket.
+
+#### 2. Modell konfiguráció
+- Egyetlen Gemini modell (`gemini-2.0-flash`) kezeli a látást és az érvelést.
+- Gyorsabb válaszidő és egyszerűbb kódstruktúra.
+
+#### 3. Dokumentáció frissítése
+- README.md egyszerűsítve az új architektúrának megfelelően.
