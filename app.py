@@ -9,7 +9,6 @@ load_dotenv()
 app = Flask(__name__)
 
 # Initialize Groq client
-# Note: In production (Vercel), ensure GROQ_API_KEY is set in the environment variables.
 client = Groq(
     api_key=os.environ.get("GROQ_API_KEY")
 )
@@ -29,7 +28,10 @@ def chat():
     history = data.get('history', [])
     images = data.get('images', []) # List of base64 strings
     subject = data.get('subject') # Subject name (e.g., 'chemistry')
-    model = "meta-llama/llama-4-maverick-17b-128e-instruct" 
+    
+    # Models
+    VISION_MODEL = "meta-llama/llama-4-maverick-17b-128e-instruct"
+    BRAIN_MODEL = "groq/compound"
     
     # Base system instruction
     system_instruction = (
@@ -52,66 +54,60 @@ def chat():
             except Exception as e:
                 print(f"Error reading subject file: {e}")
 
+    # --- STEP 1: The Eyes (Maverick 4) if images are present ---
+    image_context = ""
+    if images:
+        try:
+            vision_messages = [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Extract all text and describe the layout of this image in detail. Focus on any mathematical formulas or physics problems."},
+                    ]
+                }
+            ]
+            for img_b64 in images:
+                vision_messages[0]["content"].append({"type": "image_url", "image_url": {"url": img_b64}})
+            
+            vision_response = client.chat.completions.create(
+                model=VISION_MODEL,
+                messages=vision_messages,
+                temperature=0.1 # Low temperature for accurate extraction
+            )
+            image_context = vision_response.choices[0].message.content
+        except Exception as e:
+            print(f"Vision extraction error: {e}")
+            image_context = "Hiba történt a kép feldolgozása során."
+
+    # --- STEP 2: The Brain (Groq Compound) ---
     api_messages = [{"role": "system", "content": system_instruction}]
     
     # Process history
     for msg in history:
         role = "assistant" if msg.get("role") == "model" or msg.get("role") == "ai" else "user"
-        content_block = []
-        
-        # Text content
-        text_content = ""
+        content = ""
         if "parts" in msg:
-            text_content = msg["parts"][0]["text"]
+            content = msg["parts"][0]["text"]
         elif "content" in msg:
-            text_content = msg["content"]
+            content = msg["content"]
         else: 
-            text_content = str(msg)
-            
-        content_block.append({"type": "text", "text": text_content})
-            
-        # Image content in history (optional, simpler to ignore old images to save tokens/bandwidth unless critical)
-        # But if we did:
-        if msg.get("images"):
-             for img_b64 in msg.get("images"):
-                 content_block.append({
-                     "type": "image_url",
-                     "image_url": {
-                         "url": img_b64
-                     }
-                 })
+            content = str(msg)
+        api_messages.append({"role": role, "content": content})
 
-        # If pure text, can send string. If mixed, must be list of objects.
-        # Groq Llama 3.2 Vision supports list of content blocks.
-        if len(content_block) == 1 and content_block[0]["type"] == "text":
-            api_messages.append({"role": role, "content": content_block[0]["text"]})
-        else:
-            api_messages.append({"role": role, "content": content_block})
-
-    # Process current message
-    current_message_content = []
-    if user_message:
-        current_message_content.append({"type": "text", "text": user_message})
+    # Add current message with image context
+    final_user_content = user_message
+    if image_context:
+        final_user_content = f"Kontextus a képből: {image_context}\n\nFelhasználó kérdése: {user_message}"
     
-    for img_b64 in images:
-        current_message_content.append({
-            "type": "image_url",
-            "image_url": {
-                "url": img_b64
-            }
-        })
-
-    api_messages.append({"role": "user", "content": current_message_content})
+    api_messages.append({"role": "user", "content": final_user_content})
 
     def generate():
         try:
             completion = client.chat.completions.create(
-                model=model,
+                model=BRAIN_MODEL,
                 messages=api_messages,
-                temperature=1,
-                top_p=1,
-                stream=True,
-                stop=None
+                temperature=0.7,
+                stream=True
             )
 
             for chunk in completion:
