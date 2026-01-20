@@ -28,9 +28,6 @@
     <!-- Marked.js for Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- Device Detection (to handle manual switch back to desktop) -->
-    <script src="{{ url_for('static', filename='js/device-detector.js') }}"></script>
-
     <style>
         :root {
             --primary: #dc3232;
@@ -66,7 +63,6 @@
             flex-direction: column;
         }
 
-        /* Animated Background */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -85,34 +81,14 @@
             animation: float 20s infinite ease-in-out;
         }
 
-        .orb-1 {
-            width: 300px;
-            height: 300px;
-            top: -50px;
-            right: -50px;
-        }
-
-        .orb-2 {
-            width: 200px;
-            height: 200px;
-            bottom: 100px;
-            left: -50px;
-            animation-delay: -5s;
-        }
+        .orb-1 { width: 300px; height: 300px; top: -50px; right: -50px; }
+        .orb-2 { width: 200px; height: 200px; bottom: 100px; left: -50px; animation-delay: -5s; }
 
         @keyframes float {
-
-            0%,
-            100% {
-                transform: translate(0, 0);
-            }
-
-            50% {
-                transform: translate(-20px, 20px);
-            }
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 20px); }
         }
 
-        /* Header */
         .mobile-header {
             padding: 16px 20px;
             background: rgba(10, 0, 0, 0.8);
@@ -151,20 +127,9 @@
             box-shadow: 0 2px 10px var(--primary-glow);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 12px;
-        }
+        .header-actions { display: flex; gap: 12px; }
+        .icon-btn { background: none; border: none; color: var(--text-secondary); padding: 8px; cursor: pointer; }
 
-        .icon-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            padding: 8px;
-            cursor: pointer;
-        }
-
-        /* Chat Area */
         .chat-container {
             flex: 1;
             overflow-y: auto;
@@ -175,18 +140,8 @@
             scroll-behavior: smooth;
         }
 
-        .message {
-            display: flex;
-            gap: 10px;
-            max-width: 90%;
-            animation: slideIn 0.3s ease;
-        }
-
-        .message.user-message {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
+        .message { display: flex; gap: 10px; max-width: 90%; animation: slideIn 0.3s ease; }
+        .message.user-message { align-self: flex-end; flex-direction: row-reverse; }
         .message-content {
             padding: 12px 16px;
             border-radius: 16px;
@@ -194,23 +149,6 @@
             line-height: 1.5;
             word-wrap: break-word;
             overflow-wrap: anywhere;
-            hyphens: auto;
-            position: relative;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-
-        /* Ensure math doesn't overflow */
-        .katex-display {
-            overflow-x: auto;
-            overflow-y: hidden;
-            padding: 8px 0;
-            margin: 8px 0;
-            max-width: 100%;
-        }
-
-        .katex {
-            white-space: normal;
         }
 
         .message.ai-message .message-content {
@@ -226,71 +164,8 @@
             box-shadow: 0 4px 15px var(--primary-glow);
         }
 
-        .message-content img {
-            max-width: 100%;
-            border-radius: 8px;
-            margin-top: 8px;
-        }
+        .message-content img { max-width: 100%; border-radius: 8px; margin-top: 8px; }
 
-        .message-content code {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            font-size: 0.9em;
-            border: 1px solid rgba(220, 50, 50, 0.2);
-            word-break: break-all;
-        }
-
-        .message-content pre {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 12px;
-            border-radius: 12px;
-            overflow-x: auto;
-            margin: 11px 0;
-            font-size: 0.85em;
-            border: 1px solid var(--border-color);
-        }
-
-        .message-content pre code {
-            background: none;
-            padding: 0;
-            border: none;
-            word-break: normal;
-        }
-
-        /* Tables */
-        .message-content table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 10px 0;
-            font-size: 0.9em;
-        }
-
-        .message-content th,
-        .message-content td {
-            border: 1px solid var(--border-color);
-            padding: 8px;
-            text-align: left;
-        }
-
-        .message-content th {
-            background: rgba(220, 50, 50, 0.1);
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Input Area - Fixed at bottom */
         .input-bar {
             background: rgba(10, 0, 0, 0.9);
             backdrop-filter: blur(20px);
@@ -310,215 +185,68 @@
             padding: 10px 16px;
             color: var(--text-primary);
             font-size: 16px;
-            /* Prevent zoom on iOS */
             max-height: 100px;
             min-height: 44px;
             resize: none;
-            font-family: inherit;
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: var(--primary);
         }
 
         .send-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            width: 44px; height: 44px; border-radius: 50%; background: var(--primary);
+            border: none; color: white; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 12px var(--primary-glow);
         }
 
         .image-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.05);
+            border: none; color: var(--text-secondary); display: flex; align-items: center; justify-content: center;
         }
 
-        /* Bottom Navigation */
         .bottom-nav {
             height: 60px;
-            background: #0f0505;
+            background: rgba(10, 0, 0, 0.95);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding-bottom: var(--safe-area-bottom);
-            z-index: 100;
         }
 
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            text-decoration: none;
-            padding: 8px;
-            transition: color 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: var(--text-muted); font-size: 0.7rem;
         }
 
-        .nav-item i {
-            width: 24px;
-            height: 24px;
-        }
+        .nav-item.active { color: var(--primary); }
 
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-item.active i {
-            filter: drop-shadow(0 0 8px var(--primary-glow));
-        }
-
-        /* Image Preview */
-        #mobile-image-preview {
-            position: absolute;
-            bottom: 100%;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            background: rgba(10, 0, 0, 0.8);
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .preview-thumb {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-            position: relative;
-        }
-
-        /* Floating Subject Menu (Select styled as bottom sheet trigger) */
-        .subject-fab {
-            position: fixed;
-            bottom: 80px;
-            right: 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--primary);
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: var(--text-primary);
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            z-index: 95;
-            transition: transform 0.3s;
-        }
-
-        .subject-fab.hidden {
-            transform: translateY(100px);
-        }
-
-        /* Typing Indicator */
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-            padding: 4px;
-        }
-
-        .dot {
-            width: 6px;
-            height: 6px;
-            background: var(--text-secondary);
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out;
-        }
-
-        .dot:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-
-        .dot:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0);
-            }
-
-            40% {
-                transform: scale(1);
-            }
-        }
-
-        /* Subject Modal overlay */
         .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: flex-end;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
+            z-index: 2000; display: none; justify-content: center; align-items: flex-end;
         }
 
         .modal-content {
-            background: #1a0505;
-            width: 100%;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            padding: 24px;
+            background: #1a0505; width: 100%; border-top-left-radius: 24px;
+            border-top-right-radius: 24px; padding: 24px;
             padding-bottom: calc(24px + var(--safe-area-bottom));
             border-top: 1px solid var(--primary-glow);
             animation: slideUp 0.3s ease;
         }
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         .subject-option {
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
+            padding: 16px; display: flex; align-items: center; gap: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-primary);
         }
 
-        .subject-option:active {
-            background: rgba(220, 50, 50, 0.1);
-        }
+        .subject-icon { color: var(--primary); }
 
-        .subject-icon {
-            color: var(--primary);
+        #mobile-image-preview { display: flex; gap: 8px; overflow-x: auto; padding: 0 0 8px 0; }
+        .preview-wrapper { position: relative; flex-shrink: 0; }
+        .preview-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--primary); }
+        .remove-preview {
+            position: absolute; top: -5px; right: -5px; background: var(--primary);
+            color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px;
         }
     </style>
 </head>
@@ -529,259 +257,143 @@
         <div class="orb orb-2"></div>
     </div>
 
-    <!-- Header -->
     <header class="mobile-header">
-        <div class="logo">
-            <div class="logo-icon">V</div>
-            <span>VFG-AI</span>
-        </div>
+        <div class="logo"><div class="logo-icon">V</div><span>VFG-AI</span></div>
         <div class="header-actions">
-            <button class="icon-btn" onclick="toggleSubjectModal()">
-                <i data-lucide="layers"></i>
-            </button>
-            <button class="icon-btn" onclick="startNewChat()">
-                <i data-lucide="plus-circle"></i>
-            </button>
+            <button class="icon-btn" onclick="toggleSubjectModal()"><i data-lucide="layers"></i></button>
+            <button class="icon-btn" onclick="location.reload()"><i data-lucide="plus-circle"></i></button>
         </div>
     </header>
 
-    <!-- Chat Area -->
-    <div class="chat-container" id="chat-messages">
-        <!-- Messages injected here -->
-    </div>
+    <div class="chat-container" id="chat-messages"></div>
 
-    <!-- Input Area -->
     <div class="input-bar">
         <div id="mobile-image-preview"></div>
         <input type="file" id="img-upload" hidden accept="image/*" multiple onchange="handleMobileImageUpload(event)">
-        <input type="file" id="camera-upload" hidden accept="image/*" capture="environment"
-            onchange="handleMobileImageUpload(event)">
-        <button class="image-btn" onclick="document.getElementById('img-upload').click()" title="Kép feltöltése">
-            <i data-lucide="image"></i>
-        </button>
-        <button class="image-btn" onclick="document.getElementById('camera-upload').click()" title="Kamera megnyitása">
-            <i data-lucide="camera"></i>
-        </button>
+        <button class="image-btn" onclick="document.getElementById('img-upload').click()"><i data-lucide="image"></i></button>
         <textarea class="chat-input" id="mobile-input" placeholder="Üzenet..." rows="1"></textarea>
-        <button class="send-btn" id="mobile-send">
-            <i data-lucide="send"></i>
-        </button>
+        <button class="send-btn" id="mobile-send"><i data-lucide="send"></i></button>
     </div>
 
-    <!-- Bottom Nav -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('chat')">
-            <i data-lucide="message-square"></i>
-            <span>Chat</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('subjects')">
-            <i data-lucide="layout-grid"></i>
-            <span>Témák</span>
-        </div>
-        <div class="nav-item" onclick="switchDesktop()">
-            <i data-lucide="monitor"></i>
-            <span>PC</span>
-        </div>
+        <div class="nav-item active"><i data-lucide="message-square"></i><span>Chat</span></div>
+        <div class="nav-item" onclick="toggleSubjectModal()"><i data-lucide="layout-grid"></i><span>Témák</span></div>
     </nav>
 
-    <!-- Subject Modal -->
     <div class="modal" id="subject-modal" onclick="if(event.target === this) toggleSubjectModal()">
         <div class="modal-content">
-            <h3 style="margin-bottom: 16px; color: var(--text-muted); font-size: 0.9em; text-transform: uppercase;">
-                Válassz tantárgyat</h3>
-            <div class="subject-option" onclick="setSubject(null)">
-                <i data-lucide="message-circle" class="subject-icon"></i>
-                <div>
-                    <div style="font-weight: 600;">Általános</div>
-                    <div style="font-size: 0.8em; color: var(--text-muted);">Minden téma</div>
-                </div>
-            </div>
-            <div class="subject-option" onclick="setSubject('geography')">
-                <i data-lucide="globe-2" class="subject-icon"></i>
-                Földrajz
-            </div>
-            <div class="subject-option" onclick="setSubject('physics')">
-                <i data-lucide="atom" class="subject-icon"></i>
-                Fizika
-            </div>
-            <div class="subject-option" onclick="setSubject('history')">
-                <i data-lucide="scroll" class="subject-icon"></i>
-                Történelem
-            </div>
-            <div class="subject-option" onclick="setSubject('chemistry')">
-                <i data-lucide="flask-conical" class="subject-icon"></i>
-                Kémia
-            </div>
+            <h3 style="margin-bottom: 16px; color: var(--text-muted); font-size: 0.9em; text-transform: uppercase;">AI Modell</h3>
+            <select id="model-selector" style="width: 100%; background: rgba(220, 50, 50, 0.1); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px; border-radius: 12px; margin-bottom: 24px; outline: none; appearance: none;">
+                <option value="gemini-3-flash-preview">Gemini 3 Flash</option>
+                <option value="groq-compound">Groq Compound</option>
+                <option value="llama-maverick">Llama Maverick</option>
+            </select>
+
+            <h3 style="margin-bottom: 16px; color: var(--text-muted); font-size: 0.9em; text-transform: uppercase;">Válassz tantárgyat</h3>
+            <div class="subject-option" onclick="setSubject(null)"><i data-lucide="message-circle" class="subject-icon"></i><span>Általános</span></div>
+            <div class="subject-option" onclick="setSubject('chemistry')"><i data-lucide="flask-conical" class="subject-icon"></i><span>Kémia</span></div>
+            <div class="subject-option" onclick="setSubject('physics')"><i data-lucide="atom" class="subject-icon"></i><span>Fizika</span></div>
+            <div class="subject-option" onclick="setSubject('geography')"><i data-lucide="globe" class="subject-icon"></i><span>Földrajz</span></div>
+            <div class="subject-option" onclick="setSubject('history')"><i data-lucide="scroll" class="subject-icon"></i><span>Történelem</span></div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-
-        let currentSubject = null;
         let conversationHistory = [];
         let uploadedImages = [];
+        let currentSubject = null;
 
-        function getGreeting(subject) {
-            let subjectName = "Általános";
-            if (subject === 'geography') subjectName = "Földrajz";
-            else if (subject === 'physics') subjectName = "Fizika";
-            else if (subject === 'history') subjectName = "Történelem";
-            else if (subject === 'chemistry') subjectName = "Kémia";
-
-            return `Szia! 👋\nJelenlegi mód: **${subjectName}**\nMiben segíthetek?`;
+        function toggleSubjectModal() {
+            const modal = document.getElementById('subject-modal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        function initChat() {
-            const greeting = getGreeting(currentSubject);
-            appendMessage(greeting, 'ai');
-            conversationHistory = [{ "role": "model", "parts": [{ "text": greeting }] }];
+        function setSubject(subject) {
+            currentSubject = subject;
+            toggleSubjectModal();
+            startNewChat();
+        }
+
+        function startNewChat() {
+            conversationHistory = [];
+            document.getElementById('chat-messages').innerHTML = '';
+            appendMessage("Üdvözöllek! Miben segíthetek?", 'ai');
+        }
+
+        function handleMobileImageUpload(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const data = e.target.result;
+                    uploadedImages.push(data);
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'preview-wrapper';
+                    wrapper.innerHTML = `<img src="${data}" class="preview-img"><button class="remove-preview" onclick="removeImage('${data}', this)">×</button>`;
+                    document.getElementById('mobile-image-preview').appendChild(wrapper);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeImage(data, btn) {
+            uploadedImages = uploadedImages.filter(img => img !== data);
+            btn.parentElement.remove();
         }
 
         function appendMessage(text, sender, images = []) {
             const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${sender === 'user' ? 'user-message' : 'ai-message'}`;
-
-            let contentHTML = parseMarkdown(text);
-
-            // Add images if any
-            if (images && images.length > 0) {
-                images.forEach(img => {
-                    contentHTML += `<br><img src="${img}" alt="Uploaded image" />`;
-                });
-            }
-
-            msgDiv.innerHTML = `<div class="message-content">${contentHTML}</div>`;
+            msgDiv.className = `message ${sender}-message`;
+            let imgHtml = images.map(img => `<img src="${img}">`).join('');
+            msgDiv.innerHTML = `<div class="message-content">${marked.parse(text)}${imgHtml}</div>`;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
-
-            container.scrollTop = container.scrollHeight;
-
-            // Highlight code
-            msgDiv.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
+            
+            renderMathInElement(msgDiv, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
             });
         }
-
-        // Configure Marked.js
-        marked.use({
-            breaks: true,
-            gfm: true
-        });
-
-        function parseMarkdown(text) {
-            if (!text) return "";
-
-            const mathBlocks = [];
-            let processedText = text;
-
-            // Helper to replace and store
-            const storeMath = (match, content, display) => {
-                const placeholder = `[[MATH_BLOCK_${mathBlocks.length}]]`;
-                mathBlocks.push({ raw: match, content: content, display: display });
-                return placeholder;
-            };
-
-            // 1. Display Math $$...$$
-            processedText = processedText.replace(/\$\$([\s\S]+?)\$\$/g, (m, c) => storeMath(m, c, true));
-
-            // 2. Inline Math $...$
-            processedText = processedText.replace(/\$([^\$\n]+?)\$/g, (m, c) => storeMath(m, c, false));
-
-            // 3. LaTeX brackets
-            processedText = processedText.replace(/\\\[([\s\S]+?)\\\]/g, (m, c) => storeMath(m, c, true));
-            processedText = processedText.replace(/\\\(([\s\S]+?)\\\)/g, (m, c) => storeMath(m, c, false));
-
-            try {
-                let html = marked.parse(processedText);
-
-                // Restore and Pre-render
-                mathBlocks.forEach((item, index) => {
-                    const placeholder = `[[MATH_BLOCK_${index}]]`;
-                    let replacement = item.raw;
-
-                    try {
-                        if (window.katex) {
-                            replacement = katex.renderToString(item.content, {
-                                displayMode: item.display,
-                                throwOnError: true,
-                                output: 'html'
-                            });
-                        }
-                    } catch (err) {
-                        // On error, return safe raw text to avoid red errors
-                        replacement = item.raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                    }
-
-                    html = html.replace(placeholder, () => replacement);
-                });
-
-                return html;
-            } catch (e) {
-                console.error("Markdown error:", e);
-                return text;
-            }
-        }
-
-        // Auto-resize textarea
-        const textarea = document.getElementById('mobile-input');
-        textarea.addEventListener('input', function () {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-            if (this.value === '') this.style.height = '44px';
-        });
-
-        // Send Logic
-        document.getElementById('mobile-send').addEventListener('click', sendMessage);
 
         async function sendMessage() {
             const input = document.getElementById('mobile-input');
             const text = input.value.trim();
-            const images = [...uploadedImages];
+            if (!text && uploadedImages.length === 0) return;
 
-            if (!text && images.length === 0) return;
-
-            // UI Update
-            appendMessage(text, 'user', images);
+            const currentImages = [...uploadedImages];
+            appendMessage(text, 'user', currentImages);
             input.value = '';
-            input.style.height = '44px';
             uploadedImages = [];
             document.getElementById('mobile-image-preview').innerHTML = '';
 
-            // Add user message to history
-            conversationHistory.push({
-                role: "user",
-                content: text,
-                images: images
-            });
-
-            // Show typing
             const container = document.getElementById('chat-messages');
             const typingDiv = document.createElement('div');
-            typingDiv.id = 'typing';
             typingDiv.className = 'message ai-message';
-            typingDiv.innerHTML = `<div class="message-content"><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+            typingDiv.id = 'typing';
+            typingDiv.innerHTML = '<div class="message-content">...</div>';
             container.appendChild(typingDiv);
-            container.scrollTop = container.scrollHeight;
 
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         message: text,
-                        history: conversationHistory.slice(0, -1),
-                        images: images,
-                        subject: currentSubject
+                        images: currentImages,
+                        history: conversationHistory,
+                        subject: currentSubject,
+                        model: document.getElementById('model-selector').value
                     })
                 });
 
-                document.getElementById('typing').remove();
-
-                if (!response.ok) throw new Error('API Error');
-
-                // Create placeholders for streaming
+                typingDiv.remove();
                 const msgDiv = document.createElement('div');
                 msgDiv.className = 'message ai-message';
                 const contentDiv = document.createElement('div');
@@ -791,88 +403,24 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                let fullResponse = "";
+                let fullText = '';
 
                 while (true) {
-                    const { done, value } = await reader.read();
+                    const {done, value} = await reader.read();
                     if (done) break;
-
-                    const chunk = decoder.decode(value, { stream: true });
-                    fullResponse += chunk;
-                    contentDiv.innerHTML = parseMarkdown(fullResponse);
+                    fullText += decoder.decode(value);
+                    contentDiv.innerHTML = marked.parse(fullText);
                     container.scrollTop = container.scrollHeight;
                 }
-
-                // Final render
-                contentDiv.innerHTML = parseMarkdown(fullResponse);
-                msgDiv.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-
-                // Update history
-                conversationHistory.push({ role: "model", content: fullResponse });
-
+                conversationHistory.push({role: 'user', content: text});
+                conversationHistory.push({role: 'model', content: fullText});
             } catch (e) {
-                document.getElementById('typing')?.remove();
-                appendMessage("Hiba történt. Kérlek próbáld újra.", 'ai');
                 console.error(e);
             }
         }
 
-        // Subject handling
-        function toggleSubjectModal() {
-            const modal = document.getElementById('subject-modal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        function setSubject(subj) {
-            currentSubject = subj;
-            toggleSubjectModal();
-            startNewChat();
-        }
-
-        function startNewChat() {
-            document.getElementById('chat-messages').innerHTML = '';
-            initChat();
-        }
-
-        // Tab switching
-        function switchTab(tab) {
-            if (tab === 'subjects') toggleSubjectModal();
-            // Chat is default view
-        }
-
-        function switchDesktop() {
-            if (confirm("Váltasz asztali nézetre?")) {
-                window.setDevicePreference('desktop');
-            }
-        }
-
-        // Image handling
-        function handleMobileImageUpload(e) {
-            const files = Array.from(e.target.files);
-            const container = document.getElementById('mobile-image-preview');
-
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    uploadedImages.push(ev.target.result);
-                    const img = document.createElement('img');
-                    img.src = ev.target.result;
-                    img.className = 'preview-thumb';
-                    container.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-            e.target.value = '';
-        }
-
-        // Init
-        document.addEventListener('DOMContentLoaded', () => {
-            initChat();
-        });
-
+        document.getElementById('mobile-send').onclick = sendMessage;
+        startNewChat();
     </script>
 </body>
-
 </html>

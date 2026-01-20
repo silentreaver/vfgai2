@@ -955,26 +955,35 @@
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-title">MENÜ</div>
-                <div class="sidebar-item" onclick="startNewConversation()">
-                    <i data-lucide="plus-circle"></i>
-                    Új csevegés
-                </div>
-                <div class="sidebar-item" onclick="startNewConversation('geography')">
-                    <i data-lucide="globe-2"></i>
-                    Földrajz
+                <div class="sidebar-title">AI Modell</div>
+                <select id="model-selector" class="sidebar-item" style="width: 100%; background: rgba(220, 50, 50, 0.1); border: 1px solid var(--border-color); color: var(--text-primary); outline: none; appearance: none; -webkit-appearance: none;">
+                    <option value="gemini-3-flash-preview">Gemini 3 Flash</option>
+                    <option value="groq-compound">Groq Compound</option>
+                    <option value="llama-maverick">Llama Maverick</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Tantárgyak</div>
+                <div class="sidebar-item" onclick="startNewConversation('chemistry')">
+                    <i data-lucide="flask-conical"></i>
+                    <span>Kémia</span>
                 </div>
                 <div class="sidebar-item" onclick="startNewConversation('physics')">
                     <i data-lucide="atom"></i>
-                    Fizika
+                    <span>Fizika</span>
+                </div>
+                <div class="sidebar-item" onclick="startNewConversation('geography')">
+                    <i data-lucide="globe"></i>
+                    <span>Földrajz</span>
                 </div>
                 <div class="sidebar-item" onclick="startNewConversation('history')">
                     <i data-lucide="scroll"></i>
-                    Történelem
+                    <span>Történelem</span>
                 </div>
-                <div class="sidebar-item" onclick="startNewConversation('chemistry')">
-                    <i data-lucide="flask-conical"></i>
-                    Kémia
+                <div class="sidebar-item" onclick="startNewConversation()">
+                    <i data-lucide="layout-grid"></i>
+                    <span>Általános</span>
                 </div>
             </div>
         </div>
@@ -1229,9 +1238,10 @@
                     body: JSON.stringify({
                         message: message,
                         images: currentImages,
-                        history: conversationHistory.slice(0, -1), // Send previous history
-                        subject: currentSubject
-                    })
+	                        history: conversationHistory.slice(0, -1), // Send previous history
+	                        subject: currentSubject,
+	                        model: modelSelector.value
+	                    })
                 });
 
                 if (!response.ok) {
