@@ -62,7 +62,7 @@ def chat():
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "Extract all text and describe the layout of this image in detail. Focus on any mathematical formulas or physics problems."},
+                        {"type": "text", "text": "Elemezd a képet függetlenül a tantárgytól. Készíts 1:1 arányú vizuális rekonstrukciót. A grafikonokat ne csak említsd meg, hanem írd le a tengelyeiket, a görbék alakját, a metszéspontokat és az adatokat úgy, mintha egy vak embernek magyaráznád el, akinek meg kell oldania a feladatot. A matematikai képleteket konvertáld LaTeX formátumba. Minden szöveget, számot, ábrát, diagramot, táblázatot és grafikus elemet írj le részletesen, hogy a következő AI modell teljes mértékben megértse a képet anélkül, hogy látná azt. Rekonstruálj mindent digitálisan, hogy az információ 100%-ban átadható legyen."},
                     ]
                 }
             ]
@@ -72,7 +72,7 @@ def chat():
             vision_response = client.chat.completions.create(
                 model=VISION_MODEL,
                 messages=vision_messages,
-                temperature=0.1 # Low temperature for accurate extraction
+                temperature=0.0 # Zero temperature for maximum accuracy and 1:1 reconstruction
             )
             image_context = vision_response.choices[0].message.content
         except Exception as e:
@@ -97,7 +97,7 @@ def chat():
     # Add current message with image context
     final_user_content = user_message
     if image_context:
-        final_user_content = f"Kontextus a képből: {image_context}\n\nFelhasználó kérdése: {user_message}"
+        final_user_content = f"DIGITÁLIS REKONSTRUKCIÓ A KÉPBŐL (teljes 1:1 arányú átírás, kezeld úgy mintha látnád a képet):\n\n{image_context}\n\n---\n\nFELHASZNÁLÓ KÉRDÉSE: {user_message}"
     
     api_messages.append({"role": "user", "content": final_user_content})
 
