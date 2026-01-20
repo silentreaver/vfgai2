@@ -374,6 +374,29 @@
             btn.parentElement.remove();
         }
 
+        function renderMath(element) {
+            try {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true},
+                        { left: '\\begin{equation}', right: '\\end{equation}', display: true },
+                        { left: '\\begin{align}', right: '\\end{align}', display: true },
+                        { left: '\\begin{alignat}', right: '\\end{alignat}', display: true },
+                        { left: '\\begin{gather}', right: '\\end{gather}', display: true },
+                        { left: '\\begin{CD}', right: '\\end{CD}', display: true }
+                    ],
+                    throwOnError: false,
+                    trust: true,
+                    strict: false
+                });
+            } catch (e) {
+                console.error("KaTeX error:", e);
+            }
+        }
+
         function appendMessage(text, sender, images = []) {
             const container = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
@@ -382,23 +405,7 @@
             msgDiv.innerHTML = `<div class="message-content">${marked.parse(text)}${imgHtml}</div>`;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
-            
-            renderMathInElement(msgDiv, {
-                delimiters: [
-                    {left: '$$', right: '$$', display: true},
-                    {left: '$', right: '$', display: false},
-                    {left: '\\(', right: '\\)', display: false},
-                    {left: '\\[', right: '\\]', display: true},
-                    { left: '\\begin{equation}', right: '\\end{equation}', display: true },
-                    { left: '\\begin{align}', right: '\\end{align}', display: true },
-                    { left: '\\begin{alignat}', right: '\\end{alignat}', display: true },
-                    { left: '\\begin{gather}', right: '\\end{gather}', display: true },
-                    { left: '\\begin{CD}', right: '\\end{CD}', display: true }
-                ],
-                throwOnError: false,
-                trust: true,
-                strict: false
-            });
+            renderMath(msgDiv);
         }
 
         async function sendMessage() {
@@ -449,27 +456,13 @@
                     if (done) break;
                     fullText += decoder.decode(value);
                     contentDiv.innerHTML = marked.parse(fullText);
-                    
-                    // Trigger KaTeX for the streaming content
-                    renderMathInElement(contentDiv, {
-                        delimiters: [
-                            {left: '$$', right: '$$', display: true},
-                            {left: '$', right: '$', display: false},
-                            {left: '\\(', right: '\\)', display: false},
-                            {left: '\\[', right: '\\]', display: true},
-                            { left: '\\begin{equation}', right: '\\end{equation}', display: true },
-                            { left: '\\begin{align}', right: '\\end{align}', display: true },
-                            { left: '\\begin{alignat}', right: '\\end{alignat}', display: true },
-                            { left: '\\begin{gather}', right: '\\end{gather}', display: true },
-                            { left: '\\begin{CD}', right: '\\end{CD}', display: true }
-                        ],
-                        throwOnError: false,
-                        trust: true,
-                        strict: false
-                    });
-                    
+                    renderMath(contentDiv);
                     container.scrollTop = container.scrollHeight;
                 }
+                
+                // Final render pass
+                contentDiv.innerHTML = marked.parse(fullText);
+                renderMath(contentDiv);
                 conversationHistory.push({role: 'user', content: text});
                 conversationHistory.push({role: 'model', content: fullText});
             } catch (e) {

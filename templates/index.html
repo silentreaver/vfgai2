@@ -1115,7 +1115,32 @@
         });
 
         function parseMarkdown(text) {
+            // Pre-process: protect LaTeX blocks from marked.js line break interference
+            // This is a simple heuristic to keep $...$ and $$...$$ blocks cleaner
             return marked.parse(text);
+        }
+
+        function renderMath(element) {
+            try {
+                renderMathInElement(element, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false },
+                        { left: '\\(', right: '\\)', display: false },
+                        { left: '\\[', right: '\\]', display: true },
+                        { left: '\\begin{equation}', right: '\\end{equation}', display: true },
+                        { left: '\\begin{align}', right: '\\end{align}', display: true },
+                        { left: '\\begin{alignat}', right: '\\end{alignat}', display: true },
+                        { left: '\\begin{gather}', right: '\\end{gather}', display: true },
+                        { left: '\\begin{CD}', right: '\\end{CD}', display: true }
+                    ],
+                    throwOnError: false,
+                    trust: true,
+                    strict: false
+                });
+            } catch (e) {
+                console.error("KaTeX error:", e);
+            }
         }
 
         let currentSubject = null;
@@ -1305,27 +1330,16 @@
                     const chunk = decoder.decode(value, { stream: true });
                     fullResponse += chunk;
                     content.innerHTML = parseMarkdown(fullResponse);
-                    
-                    // Trigger KaTeX for the streaming content
-                    renderMathInElement(content, {
-                        delimiters: [
-                            { left: '$$', right: '$$', display: true },
-                            { left: '$', right: '$', display: false },
-                            { left: '\\(', right: '\\)', display: false },
-                            { left: '\\[', right: '\\]', display: true },
-                            { left: '\\begin{equation}', right: '\\end{equation}', display: true },
-                            { left: '\\begin{align}', right: '\\end{align}', display: true },
-                            { left: '\\begin{alignat}', right: '\\end{alignat}', display: true },
-                            { left: '\\begin{gather}', right: '\\end{gather}', display: true },
-                            { left: '\\begin{CD}', right: '\\end{CD}', display: true }
-                        ],
-                        throwOnError: false,
-                        trust: true,
-                        strict: false
-                    });
-                    
+                    renderMath(content);
                     scrollToBottom();
                 }
+                
+                // Final render pass to ensure everything is correct
+                content.innerHTML = parseMarkdown(fullResponse);
+                renderMath(content);
+                content.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
 
                 // Add final response to history
                 conversationHistory.push({ role: "model", content: fullResponse });
