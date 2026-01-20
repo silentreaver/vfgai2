@@ -9,7 +9,7 @@ A VFG-AI egy professzionális oktatási asszisztens alkalmazás, amely képes b�
 ### Kétmodelles Pipeline
 
 1. **Modell 1 - A Szem (Vision Model)**
-   - **Modell**: `meta-llama/llama-4-maverick-17b-128e-instruct`
+   - **Modell**: `gemini-2.0-flash`
    - **Feladat**: A kép fogadása és **1:1 arányú digitális rekonstrukció** létrehozása
    - **Kimenet**: Részletes szöveges leírás Markdown formátumban, amely tartalmazza:
      - Minden szöveget és számot
@@ -19,20 +19,20 @@ A VFG-AI egy professzionális oktatási asszisztens alkalmazás, amely képes b�
      - Táblázatok teljes tartalmát
 
 2. **Modell 2 - Az Agy (Reasoning Model)**
-   - **Modell**: `groq/compound`
+   - **Modell**: `gemini-2.0-flash`
    - **Feladat**: A vision modell által generált digitális rekonstrukció és a felhasználó kérdésének feldolgozása
    - **Kimenet**: Pontos, tömör válasz magyar nyelven
 
 ### Miért fontos az 1:1 rekonstrukció?
 
-A Groq Compound modellnek **nincs vision képessége**, ezért a Maverick vision modellnek olyan részletesen kell leírnia a képet, mintha egy vak embernek magyarázná el, aki meg kell oldja a feladatot. Ez biztosítja, hogy a reasoning modell **teljes információval** rendelkezzen a válaszadáshoz.
+Bár a Gemini modellek rendelkeznek vision képességgel, a kétmodelles megközelítés (Vision → Reasoning) biztosítja a legpontosabb eredményt. A vision modell olyan részletesen írja le a képet, mintha egy vak embernek magyarázná el, aki meg kell oldja a feladatot. Ez biztosítja, hogy a reasoning modell **teljes és strukturált információval** rendelkezzen a válaszadáshoz.
 
 ## Telepítés
 
 ### Előfeltételek
 
 - Python 3.8 vagy újabb
-- Groq API kulcs (beszerezhető: [console.groq.com](https://console.groq.com))
+- Gemini API kulcs (beszerezhető: [aistudio.google.com](https://aistudio.google.com))
 
 ### Lépések
 
@@ -58,7 +58,7 @@ A Groq Compound modellnek **nincs vision képessége**, ezért a Maverick vision
    
    Hozz létre egy `.env` fájlt a projekt gyökérkönyvtárában:
    ```
-   GROQ_API_KEY=your_groq_api_key_here
+   GEMINI_API_KEY=your_gemini_api_key_here
    ```
 
 5. **Alkalmazás indítása**
@@ -94,9 +94,9 @@ Ezek az utasítások automatikusan betöltődnek, amikor kiválasztasz egy tant�
 ## Technológiai Stack
 
 - **Backend**: Flask (Python)
-- **AI API**: Groq
-- **Vision Model**: Llama 4 Maverick (17B)
-- **Reasoning Model**: Groq Compound
+- **AI API**: Google Gemini
+- **Vision Model**: Gemini 2.0 Flash
+- **Reasoning Model**: Gemini 2.0 Flash
 - **Frontend**: HTML, CSS, JavaScript (Vanilla)
 
 ## Projekt Struktúra
@@ -135,4 +135,4 @@ GitHub: [@silentreaver](https://github.com/silentreaver)
 
 ---
 
-**Megjegyzés**: Ez a projekt a Groq API-t használja, amely ingyenes kvótával rendelkezik. Nagy mennyiségű használathoz érdemes lehet fizetős csomagra váltani.
+**Megjegyzés**: Ez a projekt a Google Gemini API-t használja, amely ingyenes kvótával rendelkezik a Google AI Studio-ban. Nagy mennyiségű használathoz érdemes lehet fizetős csomagra váltani.

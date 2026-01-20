@@ -60,3 +60,25 @@ A Groq Compound modell **nem rendelkezik vision képességgel**, ezért kritikus
 - [ ] Kép előfeldolgozás (kontraszt javítás, zajszűrés)
 - [ ] A/B tesztelés a régi és új prompt között
 - [ ] Felhasználói visszajelzések gyűjtése
+
+## 2026-01-20 - Áttérés Google Gemini modellekre
+
+### Változtatások
+
+#### 1. Modellcsere
+- **Vision Model**: Maverick → **Gemini 2.0 Flash**
+- **Reasoning Model**: Groq Compound → **Gemini 2.0 Flash**
+- **Indok**: A `vfg-ai` repozitórium alapján a Gemini modellek használata a cél, amelyek kiváló vision és reasoning képességekkel rendelkeznek.
+
+#### 2. Technológiai Stack Frissítése
+- **Google GenAI SDK** integrálása a Groq helyett.
+- `requirements.txt` frissítve a `google-genai` csomaggal.
+- API kulcs kezelés frissítve: `GEMINI_API_KEY` használata.
+
+#### 3. 1:1 Konverziós Logika Megtartása
+- Bár a Gemini natívan látja a képeket, megtartottuk a kétlépcsős folyamatot a maximális pontosság érdekében.
+- A vision modell továbbra is a háttérben végzi a digitális rekonstrukciót.
+- A reasoning modell a rekonstruált szöveget kapja meg, mintha ő látná a képet.
+
+#### 4. Dokumentáció Frissítése
+- README.md frissítve az új modellekkel és telepítési útmutatóval.
